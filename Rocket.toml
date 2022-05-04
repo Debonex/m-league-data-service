@@ -1,0 +1,5 @@
+[default]
+port = 7878
+
+[default.databases.sea_orm]
+url = "sqlite:database/mleague.db"

@@ -1,0 +1,16 @@
+[package]
+edition = "2021"
+name = "m-league-data-service"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+async-trait = {version = "0.1"}
+dotenv = "0.15.0"
+rocket = {version = "0.5.0-rc.1", features = ["json"]}
+sea-orm = {version = "0.7.1", features = ["sqlx-sqlite", "runtime-tokio-rustls", "macros"]}
+serde = "1.0.137"
+
+[dependencies.sea-orm-rocket]
+git = "https://github.com/SeaQL/sea-orm"
