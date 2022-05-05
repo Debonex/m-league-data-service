@@ -1,22 +1,22 @@
-use crate::entity::season_pro::{Column as SPColumn, Entity as SPEntity, Model as SPModel};
-use crate::{dto::ProData, pool::Db};
-use rocket::serde::json::Json;
+use super::*;
+use crate::data::pro as ProDao;
+use crate::data::season_pro as SeasonProDao;
+use crate::dto::ProData;
+use crate::entity::pro::Model as ProModel;
+use crate::entity::season_pro::Model as SPModel;
 use rust_decimal::prelude::ToPrimitive;
-use sea_orm::{entity::*, prelude::*, EntityTrait, QueryFilter};
-use sea_orm_rocket::Connection;
+use rust_decimal::Decimal;
 use std::ops::Add;
+
+#[get("/list")]
+pub async fn pro_list(conn: Connection<'_, Db>) -> Json<Vec<ProModel>> {
+    Json(ProDao::get_pro_list(conn).await)
+}
 
 #[get("/data/<id>")]
 pub async fn pro_data(conn: Connection<'_, Db>, id: u32) -> Json<ProData> {
-    let db = conn.into_inner();
-    let result = SPEntity::find()
-        .filter(SPColumn::ProId.eq(id))
-        .all(db)
-        .await;
-    return match result {
-        Ok(list) => Json(data_from_season_pro_list(list)),
-        Err(_) => Json(ProData::empty()),
-    };
+    let season_pro_list = SeasonProDao::get_season_pro_by_pro_id(conn, id).await;
+    Json(data_from_season_pro_list(season_pro_list))
 }
 
 fn data_from_season_pro_list(sp_list: Vec<SPModel>) -> ProData {

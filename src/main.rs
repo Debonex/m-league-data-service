@@ -4,6 +4,7 @@ extern crate rocket;
 use dotenv::dotenv;
 use sea_orm_rocket::Database;
 
+mod data;
 mod dto;
 mod entity;
 mod pool;
@@ -22,6 +23,14 @@ fn rocket() -> _ {
     rocket::build()
         .attach(Db::init())
         .mount("/", routes![index,])
-        .mount("/season_year", routes![routes::season_year::all])
-        .mount("/pro", routes![routes::pro::pro_data])
+        .mount(
+            "/season_year",
+            routes![routes::season_year::season_year_list],
+        )
+        .mount("/season", routes![routes::season::get_season_list])
+        .mount("/team", routes![routes::team::get_team_list])
+        .mount(
+            "/pro",
+            routes![routes::pro::pro_list, routes::pro::pro_data],
+        )
 }
