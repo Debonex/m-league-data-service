@@ -7,6 +7,7 @@ use sea_orm_rocket::Database;
 mod data;
 mod dto;
 mod entity;
+mod entity_impl;
 mod pool;
 mod routes;
 
