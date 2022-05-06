@@ -1,6 +1,5 @@
 use super::*;
 
-pub async fn get_season_list(conn: Connection<'_, Db>) -> Vec<SeasonModel> {
-    let db = conn.into_inner();
+pub async fn get_season_list(db: &DatabaseConnection) -> Vec<SeasonModel> {
     SeasonEntity::find().all(db).await.unwrap_or(vec![])
 }

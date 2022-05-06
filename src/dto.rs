@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 #[derive(Serialize, Debug)]
-pub struct ProData {
+pub struct Statistic {
     pub game_num: i32,
     pub kyoku_num: i32,
     pub point: f64,

@@ -5,6 +5,7 @@ use dotenv::dotenv;
 use sea_orm_rocket::Database;
 
 mod data;
+mod domain;
 mod dto;
 mod entity;
 mod entity_impl;

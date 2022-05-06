@@ -1,6 +1,5 @@
 use super::*;
 
-pub async fn get_pro_list(conn: Connection<'_, Db>) -> Vec<ProModel> {
-    let db = conn.into_inner();
+pub async fn get_pro_list(db: &DatabaseConnection) -> Vec<ProModel> {
     ProEntity::find().all(db).await.unwrap_or(vec![])
 }
