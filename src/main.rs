@@ -6,11 +6,11 @@ use sea_orm_rocket::Database;
 
 mod data;
 mod domain;
-mod dto;
 mod entity;
 mod entity_impl;
 mod pool;
 mod routes;
+mod vo;
 
 use pool::Db;
 

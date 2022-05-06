@@ -10,9 +10,3 @@ backend for m-league-data
 
 - `cargo run`
 
-## data
-
-- 2018-2019 season
-- 2019-2020 season
-- 2020-2021 season
-- 2021-2022 season

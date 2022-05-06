@@ -1,8 +1,8 @@
 use super::statistic as StatisticDomain;
 use crate::data::pro as ProDao;
 use crate::data::season_pro as SeasonProDao;
-use crate::dto::Statistic;
 use crate::entity::pro::Model as ProModel;
+use crate::vo::Statistic;
 use sea_orm::DatabaseConnection;
 
 pub async fn pro_data(db: &DatabaseConnection, id: u32) -> Statistic {

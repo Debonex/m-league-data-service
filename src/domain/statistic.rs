@@ -1,5 +1,5 @@
-use crate::dto::Statistic;
 use crate::entity::season_pro::Model as SPModel;
+use crate::vo::Statistic;
 use rust_decimal::prelude::ToPrimitive;
 
 pub fn data_from_season_pro_list(sp_list: Vec<SPModel>) -> Statistic {

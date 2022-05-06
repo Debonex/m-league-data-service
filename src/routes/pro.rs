@@ -1,7 +1,7 @@
 use super::*;
 use crate::domain::pro as ProDomain;
-use crate::dto::Statistic;
 use crate::entity::pro::Model as ProModel;
+use crate::vo::Statistic;
 
 #[get("/list")]
 pub async fn pro_list(conn: Connection<'_, Db>) -> Json<Vec<ProModel>> {
