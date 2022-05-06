@@ -1,9 +1,10 @@
-use crate::entity::season_pro::Model as SPModel;
+use crate::entity::season_pro::Model as SeasonProModel;
 use crate::vo::Statistic;
 use rust_decimal::prelude::ToPrimitive;
 
-pub fn data_from_season_pro_list(sp_list: Vec<SPModel>) -> Statistic {
-    let total: SPModel = sp_list.iter().sum();
+/// 根据赛季数据列表进行统计，给出统计数据
+pub fn statistic(sp_list: Vec<SeasonProModel>) -> Statistic {
+    let total: SeasonProModel = sp_list.iter().sum();
 
     let total_point = total.point().to_f64().unwrap_or(0.0);
     let total_kyoku_num = total.kyoku_num();

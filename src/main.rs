@@ -27,12 +27,16 @@ fn rocket() -> _ {
         .mount("/", routes![index,])
         .mount(
             "/season_year",
-            routes![routes::season_year::season_year_list],
+            routes![routes::season_year::all, routes::season_year::statistic],
         )
-        .mount("/season", routes![routes::season::get_season_list])
-        .mount("/team", routes![routes::team::get_team_list])
         .mount(
-            "/pro",
-            routes![routes::pro::pro_list, routes::pro::pro_data],
+            "/season",
+            routes![
+                routes::season::all,
+                routes::season::list,
+                routes::season::statistics
+            ],
         )
+        .mount("/team", routes![routes::team::all])
+        .mount("/pro", routes![routes::pro::all, routes::pro::statistic])
 }

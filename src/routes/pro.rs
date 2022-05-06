@@ -2,15 +2,25 @@ use super::*;
 use crate::domain::pro as ProDomain;
 use crate::entity::pro::Model as ProModel;
 use crate::vo::Statistic;
+use serde::Deserialize;
 
-#[get("/list")]
-pub async fn pro_list(conn: Connection<'_, Db>) -> Json<Vec<ProModel>> {
+#[get("/all")]
+pub async fn all(conn: Connection<'_, Db>) -> Json<Vec<ProModel>> {
     let db = conn.into_inner();
-    Json(ProDomain::pro_list(db).await)
+    Json(ProDomain::all(db).await)
 }
 
-#[get("/data/<id>")]
-pub async fn pro_data(conn: Connection<'_, Db>, id: u32) -> Json<Statistic> {
+#[derive(Deserialize)]
+pub struct ProStatisticParams {
+    id: i32,
+    seasons: Option<Vec<i32>>,
+}
+
+#[post("/statistic", format = "json", data = "<params>")]
+pub async fn statistic(
+    conn: Connection<'_, Db>,
+    params: Json<ProStatisticParams>,
+) -> Json<Statistic> {
     let db = conn.into_inner();
-    Json(ProDomain::pro_data(db, id).await)
+    Json(ProDomain::statistic(db, params.id, &params.seasons).await)
 }
