@@ -40,3 +40,10 @@ pub struct Statistic {
     pub highest_score: i32,
     pub lowest_score: i32,
 }
+
+#[derive(Debug, Serialize)]
+pub struct ProFloatValueItem {
+    pub pro_id: i32,
+    pub pro_name: String,
+    pub value: f64,
+}
