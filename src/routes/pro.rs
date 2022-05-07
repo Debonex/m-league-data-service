@@ -1,7 +1,7 @@
 use super::*;
 use crate::domain::pro as ProDomain;
 use crate::entity::pro::Model as ProModel;
-use crate::vo::{ProFloatValueItem, Statistic};
+use crate::vo::{ProRankItem, Statistic};
 use serde::Deserialize;
 
 #[get("/all")]
@@ -32,10 +32,7 @@ pub struct ProRankParams {
 }
 
 #[post("/rank", format = "json", data = "<params>")]
-pub async fn rank(
-    conn: Connection<'_, Db>,
-    params: Json<ProRankParams>,
-) -> Json<Vec<ProFloatValueItem>> {
+pub async fn rank(conn: Connection<'_, Db>, params: Json<ProRankParams>) -> Json<Vec<ProRankItem>> {
     let db = conn.into_inner();
     Json(ProDomain::rank(db, params.key.as_str(), &params.seasons).await)
 }

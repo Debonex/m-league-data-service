@@ -1,5 +1,5 @@
+use serde::ser::SerializeStruct;
 use serde::Serialize;
-
 #[derive(Serialize, Debug)]
 pub struct Statistic {
     pub game_num: i32,
@@ -46,4 +46,41 @@ pub struct ProFloatValueItem {
     pub pro_id: i32,
     pub pro_name: String,
     pub value: f64,
+}
+
+#[derive(Debug, Serialize)]
+pub struct ProIntegerValueItem {
+    pub pro_id: i32,
+    pub pro_name: String,
+    pub value: i32,
+}
+
+#[derive(Debug)]
+pub enum ProRankItem {
+    Float(ProFloatValueItem),
+    Integer(ProIntegerValueItem),
+}
+
+impl Serialize for ProRankItem {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            ProRankItem::Float(item) => {
+                let mut state = serializer.serialize_struct("ProFloatValueItem", 3)?;
+                state.serialize_field("pro_id", &item.pro_id)?;
+                state.serialize_field("pro_name", &item.pro_name)?;
+                state.serialize_field("value", &item.value)?;
+                state.end()
+            }
+            ProRankItem::Integer(item) => {
+                let mut state = serializer.serialize_struct("ProIntegerValueItem", 3)?;
+                state.serialize_field("pro_id", &item.pro_id)?;
+                state.serialize_field("pro_name", &item.pro_name)?;
+                state.serialize_field("value", &item.value)?;
+                state.end()
+            }
+        }
+    }
 }
