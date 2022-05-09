@@ -40,7 +40,7 @@ pub fn statistic(sp_list: Vec<SeasonProModel>) -> Statistic {
         richi_houjuu_rate: (total.houjuu_dama_richi_num
             + total.houjuu_furo_richi_num
             + total.houjuu_richi_richi_num) as f64
-            / total_houjuu_num,
+            / total.richi_num as f64,
         richi_tsumo_rate: total.agari_richi_tsumo_num as f64 / total_agari_richi_num,
         avg_richi_agari_score: total.agari_richi_score as f64 / total_agari_richi_num,
         richi_ryukyoku_rate: (total.ryukyoku_noten_richi_num + total.ryukyoku_tenpai_richi_num)
