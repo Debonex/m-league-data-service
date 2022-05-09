@@ -4,6 +4,7 @@ extern crate rocket;
 use dotenv::dotenv;
 use sea_orm_rocket::Database;
 
+mod bo;
 mod data;
 mod domain;
 mod entity;
@@ -40,6 +41,6 @@ fn rocket() -> _ {
         .mount("/team", routes![routes::team::all])
         .mount(
             "/pro",
-            routes![routes::pro::all, routes::pro::statistic, routes::pro::rank],
+            routes![routes::pro::all, routes::pro::statistic, routes::pro::rank,],
         )
 }

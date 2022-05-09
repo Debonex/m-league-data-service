@@ -40,15 +40,38 @@ pub async fn select_season_pro(
         .unwrap_or(vec![])
 }
 
-/// 从db获取所有选手的某一赛季数据，赛季id进行筛选
+/// 从db获取所有选手的某一赛季数据的累计，赛季id进行筛选
 pub async fn sum_column_group_by_pro(
     db: &DatabaseConnection,
-    value: &str,
+    value_sql: &str,
     seasons: &Option<Vec<i32>>,
 ) -> Vec<QueryResult> {
     let sql_select_from = format!(
         "SELECT season_pro.pro_id, {} AS value, pro.pro_name FROM season_pro, pro",
-        value
+        value_sql
+    );
+    let where_seasons_and = match seasons {
+        Some(seasons) => format!("season_pro.season_id in {} and", vec_str(seasons.to_vec())),
+        _ => String::new(),
+    };
+    let sql_where = format!("WHERE {} season_pro.pro_id = pro.id", where_seasons_and);
+    let sql = format!("{} {} group by pro_id", sql_select_from, sql_where);
+    let stmt = Statement::from_string(sea_orm::DatabaseBackend::Sqlite, sql.to_owned());
+
+    db.query_all(stmt).await.unwrap_or(vec![])
+}
+
+/// 从db获取所有选手的某两个赛季数据的累计，可通过赛季id进行筛选
+/// TODO 结合上面的函数，简化?
+pub async fn sum_two_column_group_by_pro(
+    db: &DatabaseConnection,
+    value_sql: &str,
+    value_sql2: &str,
+    seasons: &Option<Vec<i32>>,
+) -> Vec<QueryResult> {
+    let sql_select_from = format!(
+        "SELECT season_pro.pro_id, {} AS value, {} as value2, pro.pro_name FROM season_pro, pro",
+        value_sql, value_sql2
     );
     let where_seasons_and = match seasons {
         Some(seasons) => format!("season_pro.season_id in {} and", vec_str(seasons.to_vec())),

@@ -1,10 +1,10 @@
 use super::statistic as StatisticDomain;
+use crate::bo::ProTupleValueItem;
+use crate::bo::Value;
 use crate::data::pro as ProDao;
 use crate::data::season_pro as SeasonProDao;
 use crate::entity::pro::Model as ProModel;
-use crate::vo::ProFloatValueItem;
-use crate::vo::ProIntegerValueItem;
-use crate::vo::ProRankItem;
+use crate::vo::ProValueItem;
 use crate::vo::Statistic;
 use sea_orm::DatabaseConnection;
 use std::vec;
@@ -29,79 +29,134 @@ pub async fn rank(
     db: &DatabaseConnection,
     key: &str,
     seasons: &Option<Vec<i32>>,
-) -> Vec<ProRankItem> {
+) -> Vec<ProValueItem> {
     match key {
         "rank_point" | "score_point" => {
-            let mut list = pro_sum_float_value(db, format!("sum({})", key).as_str(), seasons).await;
-            list.sort_unstable_by(|a, b| a.value.partial_cmp(&b.value).unwrap());
-            list.iter()
-                .map(|x| {
-                    ProRankItem::Float(ProFloatValueItem {
-                        pro_id: x.pro_id,
-                        pro_name: x.pro_name.clone(),
-                        value: x.value,
-                    })
-                })
-                .collect()
+            value_list(db, format!("sum({})", key).as_str(), seasons, true, true).await
         }
+        "game_num" => value_list(db, format!("sum({})", key).as_str(), seasons, false, true).await,
         "point" => {
-            let mut list = pro_sum_float_value(db, "sum(score_point + rank_point)", seasons).await;
-            list.sort_unstable_by(|a, b| a.value.partial_cmp(&b.value).unwrap());
-            list.iter()
-                .map(|x| {
-                    ProRankItem::Float(ProFloatValueItem {
-                        pro_id: x.pro_id,
-                        pro_name: x.pro_name.clone(),
-                        value: x.value,
-                    })
-                })
-                .collect()
+            let mut list =
+                value_list(db, "sum(score_point + rank_point)", seasons, true, true).await;
+            // result calculated by sqlite engine is not precise, to fixed 1.
+            for item in &mut list {
+                let value = item.value.float_value().unwrap();
+                item.value = Value::Float((value * 10.0).round() / 10.0);
+            }
+            list
         }
-        "game_num" => {
-            let mut list = pro_sum_integer_value(db, "sum(game_num)", seasons).await;
-            list.sort_unstable_by(|a, b| a.value.cmp(&b.value));
-            list.iter()
-                .map(|x| {
-                    ProRankItem::Integer(ProIntegerValueItem {
-                        pro_id: x.pro_id,
-                        pro_name: x.pro_name.clone(),
-                        value: x.value,
-                    })
+        "kyoku_num" => {
+            value_list(
+                db,
+                "sum(kyoku_east_num + kyoku_north_num + kyoku_west_num + kyoku_north_num)",
+                seasons,
+                false,
+                true,
+            )
+            .await
+        }
+        "avg_point" => {
+            let list = pro_sum_two_value(
+                db,
+                "sum(score_point + rank_point)",
+                "sum(game_num)",
+                seasons,
+                true,
+                false,
+            )
+            .await;
+
+            let mut list = list
+                .iter()
+                .map(|item| ProValueItem {
+                    pro_id: item.pro_id,
+                    pro_name: item.pro_name.clone(),
+                    value: Value::Float(
+                        item.values.0.float_value().unwrap()
+                            / item.values.1.integer_value().unwrap() as f64,
+                    ),
                 })
-                .collect()
+                .collect();
+            sort_value_list(&mut list);
+            list
         }
         _ => vec![],
     }
 }
 
-async fn pro_sum_float_value(
+fn sort_value_list(list: &mut Vec<ProValueItem>) {
+    list.sort_unstable_by(|a, b| a.value.partial_cmp(&b.value).unwrap());
+}
+
+/// TODO DELETE
+async fn value_list(
     db: &DatabaseConnection,
-    key: &str,
+    value_sql: &str,
     seasons: &Option<Vec<i32>>,
-) -> Vec<ProFloatValueItem> {
-    SeasonProDao::sum_column_group_by_pro(db, key, seasons)
+    is_float: bool,
+    sort: bool,
+) -> Vec<ProValueItem> {
+    let mut list = pro_sum_value(db, value_sql, seasons, is_float).await;
+    if sort {
+        sort_value_list(&mut list);
+    }
+    list
+}
+
+async fn pro_sum_value(
+    db: &DatabaseConnection,
+    value_sql: &str,
+    seasons: &Option<Vec<i32>>,
+    is_float: bool,
+) -> Vec<ProValueItem> {
+    SeasonProDao::sum_column_group_by_pro(db, value_sql, seasons)
         .await
         .iter()
-        .map(|res| ProFloatValueItem {
+        .map(|res| ProValueItem {
             pro_id: res.try_get("", "pro_id").unwrap_or_default(),
             pro_name: res.try_get("", "pro_name").unwrap_or_default(),
-            value: res.try_get("", "value").unwrap_or_default(),
+            value: {
+                if is_float {
+                    Value::Float(res.try_get("", "value").unwrap_or_default())
+                } else {
+                    Value::Integer(res.try_get("", "value").unwrap_or_default())
+                }
+            },
         })
         .collect()
 }
 
-async fn pro_sum_integer_value(
+/// TODO 结合上面的函数，简化？
+async fn pro_sum_two_value(
     db: &DatabaseConnection,
-    key: &str,
+    value_sql: &str,
+    value_sql2: &str,
     seasons: &Option<Vec<i32>>,
-) -> Vec<ProIntegerValueItem> {
-    SeasonProDao::sum_column_group_by_pro(db, key, seasons)
+    is_float: bool,
+    is_float2: bool,
+) -> Vec<ProTupleValueItem> {
+    SeasonProDao::sum_two_column_group_by_pro(db, value_sql, value_sql2, seasons)
         .await
         .iter()
-        .map(|res| ProIntegerValueItem {
+        .map(|res| ProTupleValueItem {
             pro_id: res.try_get("", "pro_id").unwrap_or_default(),
             pro_name: res.try_get("", "pro_name").unwrap_or_default(),
-            value: res.try_get("", "value").unwrap_or_default(),
+            values: (
+                {
+                    if is_float {
+                        Value::Float(res.try_get("", "value").unwrap_or_default())
+                    } else {
+                        Value::Integer(res.try_get("", "value").unwrap_or_default())
+                    }
+                },
+                {
+                    if is_float2 {
+                        Value::Float(res.try_get("", "value2").unwrap_or_default())
+                    } else {
+                        Value::Integer(res.try_get("", "value2").unwrap_or_default())
+                    }
+                },
+            ),
         })
         .collect()
 }
