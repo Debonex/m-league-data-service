@@ -1,5 +1,5 @@
+use crate::bo::Value;
 use serde::Serialize;
-
 #[derive(Serialize, Debug)]
 pub struct Statistic {
     pub game_num: i32,
@@ -39,4 +39,11 @@ pub struct Statistic {
     pub uradora_rate: f64,
     pub highest_score: i32,
     pub lowest_score: i32,
+}
+
+#[derive(Serialize)]
+pub struct ProValueItem {
+    pub pro_id: i32,
+    pub pro_name: String,
+    pub value: Value,
 }
