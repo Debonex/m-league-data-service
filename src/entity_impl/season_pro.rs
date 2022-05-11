@@ -67,10 +67,6 @@ impl Model {
         self.agari_dama_tsumo_num + self.agari_furo_tsumo_num + self.agari_richi_tsumo_num
     }
 
-    pub fn dama_num(&self) -> i32 {
-        self.agari_dama_ron_num + self.agari_dama_tsumo_num
-    }
-
     pub fn ron_num(&self) -> i32 {
         self.agari_dama_ron_num + self.agari_furo_ron_num + self.agari_richi_ron_num
     }
@@ -146,7 +142,7 @@ impl<'a> Add<&'a Model> for Model {
             kyoku_north_num: self.kyoku_north_num + other.kyoku_north_num,
             shanten_num: self.shanten_num + other.shanten_num,
             haipai_dora_num: self.haipai_dora_num + other.haipai_dora_num,
-            renchan_max_num: self.renchan_max_num + other.renchan_max_num,
+            renchan_max_num: max(self.renchan_max_num, other.renchan_max_num),
             furo_num: self.furo_num + other.furo_num,
             richi_num: self.richi_num + other.richi_num,
             richi_first_num: self.richi_first_num + other.richi_first_num,

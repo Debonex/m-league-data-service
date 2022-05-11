@@ -12,6 +12,14 @@ pub fn statistic(sp_list: Vec<SeasonProModel>) -> Statistic {
     let total_houjuu_num = total.houjuu_num() as f64;
     let total_agari_richi_num = total.agari_richi_num() as f64;
     let total_ryukyoku_num = total.ryukyoku_num() as f64;
+
+    let total_houjuu_furo_num = (total.houjuu_dama_furo_num
+        + total.houjuu_furo_furo_num
+        + total.houjuu_richi_furo_num) as f64;
+
+    let total_houjuu_richi_num = (total.houjuu_dama_richi_num
+        + total.houjuu_furo_richi_num
+        + total.houjuu_richi_richi_num) as f64;
     Statistic {
         game_num: total.game_num,
         kyoku_num: total_kyoku_num,
@@ -19,11 +27,36 @@ pub fn statistic(sp_list: Vec<SeasonProModel>) -> Statistic {
         avg_point: total_point / total.game_num as f64,
         agari_rate: total_agari_num / total_kyoku_num as f64,
         houjuu_rate: total_houjuu_num / total_kyoku_num as f64,
+        houjuu_menzen_rate: (total.houjuu_dama_menzen_num
+            + total.houjuu_furo_menzen_num
+            + total.houjuu_richi_menzen_num) as f64
+            / total_houjuu_num as f64,
+        houjuu_furo_rate: total_houjuu_furo_num / total_houjuu_num as f64,
+        houjuu_richi_rate: total_houjuu_richi_num / total_houjuu_num as f64,
+        houjuu_to_dama_rate: (total.houjuu_dama_menzen_num
+            + total.houjuu_dama_furo_num
+            + total.houjuu_dama_richi_num) as f64
+            / total_houjuu_num as f64,
+        houjuu_to_furo_rate: (total.houjuu_furo_menzen_num
+            + total.houjuu_furo_furo_num
+            + total.houjuu_furo_richi_num) as f64
+            / total_houjuu_num as f64,
+        houjuu_to_richi_rate: (total.houjuu_richi_menzen_num
+            + total.houjuu_richi_furo_num
+            + total.houjuu_richi_richi_num) as f64
+            / total_houjuu_num as f64,
         tsumo_rate: total.tsumo_num() as f64 / total_agari_num,
-        dama_rate: total.dama_num() as f64 / total_agari_num,
+        agari_dama_rate: total.agari_dama_num() as f64 / total_agari_num,
+        agari_furo_rate: total.agari_furo_num() as f64 / total_agari_num,
+        agari_richi_rate: total.agari_richi_num() as f64 / total_agari_num,
         ryukyoku_rate: total_ryukyoku_num / total_kyoku_num as f64,
         ryukyoku_tenpai_rate: total.ryukyoku_tenpai_num() as f64 / total_ryukyoku_num,
         furo_rate: total.furo_num as f64 / total_kyoku_num as f64,
+        furo_agari_rate: total.agari_furo_num() as f64 / total.furo_num as f64,
+        furo_ryukyoku_rate: (total.ryukyoku_noten_furo_num + total.ryukyoku_tenpai_furo_num) as f64
+            / total.furo_num as f64,
+        furo_houjuu_rate: total_houjuu_furo_num / total.furo_num as f64,
+        avg_furo_agari_score: total.agari_furo_score as f64 / total.agari_furo_num() as f64,
         richi_rate: total.richi_num as f64 / total_kyoku_num as f64,
         avg_agari_turn: total.agari_turn_num as f64 / total_agari_num,
         avg_agari_score: total.agari_score() as f64 / total_agari_num,
@@ -37,10 +70,7 @@ pub fn statistic(sp_list: Vec<SeasonProModel>) -> Statistic {
         third_rate: total.third_num() as f64 / total.game_num as f64,
         fourth_rate: total.fourth_num() as f64 / total.game_num as f64,
         richi_agari_rate: total_agari_richi_num / total.richi_num as f64,
-        richi_houjuu_rate: (total.houjuu_dama_richi_num
-            + total.houjuu_furo_richi_num
-            + total.houjuu_richi_richi_num) as f64
-            / total.richi_num as f64,
+        richi_houjuu_rate: total_houjuu_richi_num / total.richi_num as f64,
         richi_tsumo_rate: total.agari_richi_tsumo_num as f64 / total_agari_richi_num,
         avg_richi_agari_score: total.agari_richi_score as f64 / total_agari_richi_num,
         richi_ryukyoku_rate: (total.ryukyoku_noten_richi_num + total.ryukyoku_tenpai_richi_num)
@@ -59,5 +89,6 @@ pub fn statistic(sp_list: Vec<SeasonProModel>) -> Statistic {
             / total_agari_richi_num,
         highest_score: total.game_highest_score.unwrap_or_default(),
         lowest_score: total.game_lowest_score.unwrap_or_default(),
+        renchan_max_num: total.renchan_max_num,
     }
 }

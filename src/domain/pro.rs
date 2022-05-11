@@ -39,6 +39,10 @@ const RYUKYOKU_NUM: &str =
     "sum(ryukyoku_tenpai_menzen_num + ryukyoku_tenpai_furo_num + ryukyoku_tenpai_richi_num +
     ryukyoku_noten_menzen_num + ryukyoku_noten_furo_num + ryukyoku_noten_richi_num)";
 const AGARI_RICHI_NUM: &str = "sum(agari_richi_ron_num + agari_richi_tsumo_num)";
+const HOUJUU_FURO_NUM: &str =
+    "sum(houjuu_dama_furo_num + houjuu_furo_furo_num + houjuu_richi_furo_num)";
+const HOUJUU_RICHI_NUM: &str =
+    "sum(houjuu_dama_richi_num + houjuu_furo_richi_num + houjuu_richi_richi_num)";
 
 /// 获取选手某项统计数据的排名，可根据赛季id进行筛选
 pub async fn rank(
@@ -64,10 +68,44 @@ pub async fn rank(
         "avg_point" => divided_list(db, POINT, "sum(game_num)", seasons, true, true).await,
         "agari_rate" => divided_list(db, AGARI_NUM, KYOKU_NUM, seasons, false, true).await,
         "houjuu_rate" => divided_list(db, HOUJUU_NUM, KYOKU_NUM, seasons, false, true).await,
+        "houjuu_menzen_rate" => {
+            let houjuu_menzen_num =
+                "sum(houjuu_dama_menzen_num + houjuu_furo_menzen_num + houjuu_richi_menzen_num)";
+            divided_list(db, houjuu_menzen_num, HOUJUU_NUM, seasons, false, true).await
+        }
+        "houjuu_furo_rate" => {
+            divided_list(db, HOUJUU_FURO_NUM, HOUJUU_NUM, seasons, false, true).await
+        }
+        "houjuu_richi_rate" => {
+            divided_list(db, HOUJUU_RICHI_NUM, HOUJUU_NUM, seasons, false, true).await
+        }
+        "houjuu_to_dama_rate" => {
+            let houjuu_to_dama_num =
+                "sum(houjuu_dama_menzen_num + houjuu_dama_furo_num + houjuu_dama_richi_num)";
+            divided_list(db, houjuu_to_dama_num, HOUJUU_NUM, seasons, false, true).await
+        }
+        "houjuu_to_furo_rate" => {
+            let houjuu_to_furo_num =
+                "sum(houjuu_furo_menzen_num + houjuu_furo_furo_num + houjuu_furo_richi_num)";
+            divided_list(db, houjuu_to_furo_num, HOUJUU_NUM, seasons, false, true).await
+        }
+        "houjuu_to_richi_rate" => {
+            let houjuu_to_richi_num =
+                "sum(houjuu_richi_menzen_num + houjuu_richi_furo_num + houjuu_richi_richi_num)";
+            divided_list(db, houjuu_to_richi_num, HOUJUU_NUM, seasons, false, true).await
+        }
         "tsumo_rate" => divided_list(db, TSUMO_NUM, AGARI_NUM, seasons, false, true).await,
-        "dama_rate" => {
-            let dama_num = "sum(agari_dama_ron_num + agari_dama_tsumo_num)";
-            divided_list(db, dama_num, AGARI_NUM, seasons, false, true).await
+        "agari_dama_rate" => {
+            let agari_dama_num = "sum(agari_dama_ron_num + agari_dama_tsumo_num)";
+            divided_list(db, agari_dama_num, AGARI_NUM, seasons, false, true).await
+        }
+        "agari_furo_rate" => {
+            let agari_furo_num = "sum(agari_furo_ron_num + agari_furo_tsumo_num)";
+            divided_list(db, agari_furo_num, AGARI_NUM, seasons, false, true).await
+        }
+        "agari_richi_rate" => {
+            let agari_richi_num = "sum(agari_richi_ron_num + agari_richi_tsumo_num)";
+            divided_list(db, agari_richi_num, AGARI_NUM, seasons, false, true).await
         }
         "ryukyoku_rate" => divided_list(db, RYUKYOKU_NUM, KYOKU_NUM, seasons, false, true).await,
         "ryukyoku_tenpai_rate" => {
@@ -75,6 +113,29 @@ pub async fn rank(
             divided_list(db, ryu_ten_num, RYUKYOKU_NUM, seasons, false, true).await
         }
         "furo_rate" => divided_list(db, "sum(furo_num)", KYOKU_NUM, seasons, false, true).await,
+        "furo_agari_rate" => {
+            let agari_furo_num = "sum(agari_furo_ron_num + agari_furo_tsumo_num)";
+            divided_list(db, agari_furo_num, "sum(furo_num)", seasons, false, true).await
+        }
+        "furo_ryukyoku_rate" => {
+            let furo_ryukyoku_num = "sum(ryukyoku_noten_furo_num + ryukyoku_tenpai_furo_num)";
+            divided_list(db, furo_ryukyoku_num, "sum(furo_num)", seasons, false, true).await
+        }
+        "furo_houjuu_rate" => {
+            divided_list(db, HOUJUU_FURO_NUM, "sum(furo_num)", seasons, false, true).await
+        }
+        "avg_furo_agari_score" => {
+            let agari_furo_num = "sum(agari_furo_ron_num + agari_furo_tsumo_num)";
+            divided_list(
+                db,
+                "sum(agari_furo_score)",
+                agari_furo_num,
+                seasons,
+                false,
+                true,
+            )
+            .await
+        }
         "richi_rate" => divided_list(db, RICHI_NUM, KYOKU_NUM, seasons, false, true).await,
         "avg_agari_turn" => {
             divided_list(db, "sum(agari_turn_num)", AGARI_NUM, seasons, false, true).await
@@ -206,6 +267,7 @@ pub async fn rank(
             sort_value_list(&mut list);
             list
         }
+        "renchan_max_num" => value_list(db, "max(renchan_max_num)", seasons, false, true).await,
         _ => vec![],
     }
 }
