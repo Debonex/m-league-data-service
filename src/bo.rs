@@ -3,6 +3,7 @@ use serde::Serialize;
 pub struct ProTupleValueItem {
     pub pro_id: i32,
     pub pro_name: String,
+    pub team_id: i32,
     pub values: (Value, Value),
 }
 

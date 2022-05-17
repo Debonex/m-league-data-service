@@ -9,6 +9,7 @@ pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: i32,
     pub pro_name: Option<String>,
+    pub team_id: Option<i32>,
     pub birth: Option<String>,
     pub birth_place: Option<String>,
     pub org: Option<String>,
@@ -17,8 +18,22 @@ pub struct Model {
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
+    #[sea_orm(
+        belongs_to = "super::team::Entity",
+        from = "Column::TeamId",
+        to = "super::team::Column::Id",
+        on_update = "NoAction",
+        on_delete = "NoAction"
+    )]
+    Team,
     #[sea_orm(has_many = "super::season_pro::Entity")]
     SeasonPro,
+}
+
+impl Related<super::team::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::Team.def()
+    }
 }
 
 impl Related<super::season_pro::Entity> for Entity {

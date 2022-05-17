@@ -47,7 +47,7 @@ pub async fn sum_column_group_by_pro(
     seasons: &Option<Vec<i32>>,
 ) -> Vec<QueryResult> {
     let sql_select_from = format!(
-        "SELECT season_pro.pro_id, {} AS value, pro.pro_name FROM season_pro, pro",
+        "SELECT season_pro.pro_id, {} AS value, pro.pro_name, pro.team_id FROM season_pro, pro",
         value_sql
     );
     let where_seasons_and = match seasons {
@@ -70,7 +70,7 @@ pub async fn sum_two_column_group_by_pro(
     seasons: &Option<Vec<i32>>,
 ) -> Vec<QueryResult> {
     let sql_select_from = format!(
-        "SELECT season_pro.pro_id, {} AS value, {} as value2, pro.pro_name FROM season_pro, pro",
+        "SELECT season_pro.pro_id, {} AS value, {} as value2, pro.pro_name, pro.team_id FROM season_pro, pro",
         value_sql, value_sql2
     );
     let where_seasons_and = match seasons {

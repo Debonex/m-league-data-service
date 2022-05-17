@@ -38,7 +38,14 @@ fn rocket() -> _ {
                 routes::season::statistics
             ],
         )
-        .mount("/team", routes![routes::team::all])
+        .mount(
+            "/team",
+            routes![
+                routes::team::all,
+                routes::team::info,
+                routes::team::info_by_pro_id
+            ],
+        )
         .mount(
             "/pro",
             routes![

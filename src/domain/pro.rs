@@ -16,8 +16,9 @@ pub async fn all(db: &DatabaseConnection) -> Vec<ProModel> {
 
 /// 根据id获取某个选手的基本信息
 pub async fn info(db: &DatabaseConnection, id: i32) -> ProModel {
-    ProDao::get_pro(db, id).await.unwrap_or(ProModel {
+    ProDao::select_pro(db, id).await.unwrap_or(ProModel {
         id,
+        team_id: None,
         birth: None,
         birth_place: None,
         org: None,
@@ -317,6 +318,7 @@ async fn divided_list(
         .map(|item| ProValueItem {
             pro_id: item.pro_id,
             pro_name: item.pro_name.clone(),
+            team_id: item.team_id,
             value: {
                 let divide_num = item.values.1.integer_value().unwrap() as f64;
                 let divided_num = {
@@ -352,6 +354,7 @@ async fn pro_value_list(
         .map(|res| ProValueItem {
             pro_id: res.try_get("", "pro_id").unwrap_or_default(),
             pro_name: res.try_get("", "pro_name").unwrap_or_default(),
+            team_id: res.try_get("", "team_id").unwrap_or_default(),
             value: {
                 if is_float {
                     Value::Float(res.try_get("", "value").unwrap_or_default())
@@ -378,6 +381,7 @@ async fn pro_tuple_value_list(
         .map(|res| ProTupleValueItem {
             pro_id: res.try_get("", "pro_id").unwrap_or_default(),
             pro_name: res.try_get("", "pro_name").unwrap_or_default(),
+            team_id: res.try_get("", "team_id").unwrap_or_default(),
             values: (
                 {
                     if is_float {
