@@ -14,6 +14,18 @@ pub async fn all(db: &DatabaseConnection) -> Vec<ProModel> {
     ProDao::select_all_pro(db).await
 }
 
+/// 根据id获取某个选手的基本信息
+pub async fn info(db: &DatabaseConnection, id: i32) -> ProModel {
+    ProDao::get_pro(db, id).await.unwrap_or(ProModel {
+        id,
+        birth: None,
+        birth_place: None,
+        org: None,
+        pro_name: None,
+        pro_year: None,
+    })
+}
+
 /// 获取某个选手的统计数据，可根据赛季id进行筛选
 pub async fn statistic(
     db: &DatabaseConnection,

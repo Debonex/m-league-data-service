@@ -41,6 +41,11 @@ fn rocket() -> _ {
         .mount("/team", routes![routes::team::all])
         .mount(
             "/pro",
-            routes![routes::pro::all, routes::pro::statistic, routes::pro::rank,],
+            routes![
+                routes::pro::all,
+                routes::pro::statistic,
+                routes::pro::rank,
+                routes::pro::info
+            ],
         )
 }

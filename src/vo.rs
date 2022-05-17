@@ -60,3 +60,14 @@ pub struct ProValueItem {
     pub pro_name: String,
     pub value: Value,
 }
+
+#[derive(Serialize)]
+pub struct ProInfo {
+    pub pro_id: Option<i32>,
+    pub team_id: Option<i32>,
+    pub pro_name: Option<String>,
+    pub birth: Option<String>,
+    pub birth_place: Option<String>,
+    pub org: Option<String>,
+    pub pro_year: Option<i32>,
+}

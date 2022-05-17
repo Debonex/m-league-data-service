@@ -23,3 +23,14 @@ backend for m-league-data
 ## run with docker image
 
 - `docker pull debonex/m-league-data-service:latest`
+
+
+## Development
+
+### generate orm entity
+
+```
+cargo install sea-orm-cli
+
+sea-orm-cli generate entity -o src/entity --with-serde serialize
+```
