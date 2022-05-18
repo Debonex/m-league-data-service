@@ -52,7 +52,8 @@ fn rocket() -> _ {
                 routes::pro::all,
                 routes::pro::statistic,
                 routes::pro::rank,
-                routes::pro::info
+                routes::pro::info,
+                routes::pro::list_by_team_id
             ],
         )
 }

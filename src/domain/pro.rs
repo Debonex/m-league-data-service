@@ -27,6 +27,11 @@ pub async fn info(db: &DatabaseConnection, id: i32) -> ProModel {
     })
 }
 
+/// 根据队伍id获取该队伍所有选手的基本信息
+pub async fn list_by_team_id(db: &DatabaseConnection, team_id: i32) -> Vec<ProModel> {
+    ProDao::select_pro_by_team_id(db, team_id).await
+}
+
 /// 获取某个选手的统计数据，可根据赛季id进行筛选
 pub async fn statistic(
     db: &DatabaseConnection,

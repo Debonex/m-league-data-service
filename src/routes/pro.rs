@@ -16,6 +16,12 @@ pub async fn info(conn: Connection<'_, Db>, id: i32) -> Json<ProModel> {
     Json(ProDomain::info(db, id).await)
 }
 
+#[get("/list_by_team_id/<team_id>")]
+pub async fn list_by_team_id(conn: Connection<'_, Db>, team_id: i32) -> Json<Vec<ProModel>> {
+    let db = conn.into_inner();
+    Json(ProDomain::list_by_team_id(db, team_id).await)
+}
+
 #[derive(Deserialize)]
 pub struct ProStatisticParams {
     id: i32,

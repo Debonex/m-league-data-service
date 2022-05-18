@@ -1,5 +1,5 @@
 // data access
-use crate::entity::pro::{Entity as ProEntity, Model as ProModel};
+use crate::entity::pro::{Column as ProColumn, Entity as ProEntity, Model as ProModel};
 use crate::entity::season::{Column as SeasonColumn, Entity as SeasonEntity, Model as SeasonModel};
 use crate::entity::season_pro::{
     Column as SeasonProColumn, Entity as SeasonProEntity, Model as SeasonProModel,
