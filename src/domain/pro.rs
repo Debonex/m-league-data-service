@@ -202,20 +202,40 @@ pub async fn rank(
                 "sum(first_east_num + first_south_num + first_west_num + first_north_num)";
             divided_list(db, first_num, "sum(game_num)", seasons, false, true).await
         }
+        "avg_first_score" => {
+            let first_num =
+                "sum(first_east_num + first_south_num + first_west_num + first_north_num)";
+            divided_list(db, "sum(first_score)", first_num, seasons, false, true).await
+        }
         "second_rate" => {
             let second_num =
                 "sum(second_east_num + second_south_num + second_west_num + second_north_num)";
             divided_list(db, second_num, "sum(game_num)", seasons, false, true).await
+        }
+        "avg_second_score" => {
+            let second_num =
+                "sum(second_east_num + second_south_num + second_west_num + second_north_num)";
+            divided_list(db, "sum(second_score)", second_num, seasons, false, true).await
         }
         "third_rate" => {
             let third_num =
                 "sum(third_east_num + third_south_num + third_west_num + third_north_num)";
             divided_list(db, third_num, "sum(game_num)", seasons, false, true).await
         }
+        "avg_third_score" => {
+            let third_num =
+                "sum(third_east_num + third_south_num + third_west_num + third_north_num)";
+            divided_list(db, "sum(third_score)", third_num, seasons, false, true).await
+        }
         "fourth_rate" => {
             let fourth_num =
                 "sum(fourth_east_num + fourth_south_num + fourth_west_num + fourth_north_num)";
             divided_list(db, fourth_num, "sum(game_num)", seasons, false, true).await
+        }
+        "avg_fourth_score" => {
+            let fourth_num =
+                "sum(fourth_east_num + fourth_south_num + fourth_west_num + fourth_north_num)";
+            divided_list(db, "sum(fourth_score)", fourth_num, seasons, false, true).await
         }
         "richi_agari_rate" => {
             divided_list(db, AGARI_RICHI_NUM, RICHI_NUM, seasons, false, true).await
