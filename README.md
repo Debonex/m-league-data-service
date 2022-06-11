@@ -6,7 +6,7 @@ backend for m-league-data
 
 - generate sqlite db file with [m-league-data-fetcher](https://github.com/Debonex/m-league-data-fetcher)
 
-- modify `url` in `Rocket.toml` to point to the generated `.db` file
+- modify `DATABASE_URL` in `.env` to point to the generated `.db` file
 
 - `cargo run`
 
@@ -14,9 +14,9 @@ backend for m-league-data
 
 - generate sqlite db file with [m-league-data-fetcher](https://github.com/Debonex/m-league-data-fetcher)
 
-- modify `url` in `Rocket.toml` to point to the generated `.db` file
+- modify `DATABASE_URL` in `.env` to point to the generated `.db` file
 
-- modify database path in dockerfile `COPY ./database ./database` the first path is where the `.db` locate, and the second path should be the same as database directory in `Rocket.toml`
+- modify database path in dockerfile `COPY ./database ./database` the first path is where the `.db` locate, and the second path should be the same as database directory in `.env`
 
 - `docker build -t {image-name} .`
 
@@ -27,10 +27,4 @@ backend for m-league-data
 
 ## Development
 
-### generate orm entity
-
-```
-cargo install sea-orm-cli
-
-sea-orm-cli generate entity -o src/entity --with-serde serialize
-```
+Prepare db file first.

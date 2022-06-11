@@ -6,13 +6,6 @@ version = "0.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-async-trait = {version = "0.1"}
 dotenv = "0.15.0"
 rocket = {version = "0.5.0-rc.1", features = ["json"]}
-rust_decimal = "1.23"
-rust_decimal_macros = "1.23"
-sea-orm = {version = "0.7.1", features = ["sqlx-sqlite", "runtime-tokio-rustls", "macros"]}
-serde = "1.0.137"
-
-[dependencies.sea-orm-rocket]
-git = "https://github.com/SeaQL/sea-orm"
+sqlx = {version = "0.5.13", features = ["runtime-tokio-native-tls", "sqlite"]}

@@ -1,6 +1,5 @@
-use crate::entity::season_pro::Model as SeasonProModel;
-use crate::vo::Statistic;
-use rust_decimal::prelude::ToPrimitive;
+use super::season_pro::SeasonPro;
+use rocket::serde::Serialize;
 
 fn divide(divided: f64, divide: f64) -> f64 {
     if divide == 0.0 {
@@ -10,10 +9,10 @@ fn divide(divided: f64, divide: f64) -> f64 {
 }
 
 /// 根据赛季数据列表进行统计，给出统计数据
-pub fn statistic(sp_list: Vec<SeasonProModel>) -> Statistic {
-    let total: SeasonProModel = sp_list.iter().sum();
+pub fn statistics(sp_list: Vec<SeasonPro>) -> Statistic {
+    let total: SeasonPro = sp_list.iter().sum();
 
-    let total_point = total.point().to_f64().unwrap_or(0.0);
+    let total_point = total.point();
     let total_kyoku_num = total.kyoku_num();
     let total_agari_num = total.agari_num() as f64;
     let total_houjuu_num = total.houjuu_num() as f64;
@@ -31,8 +30,8 @@ pub fn statistic(sp_list: Vec<SeasonProModel>) -> Statistic {
     Statistic {
         game_num: total.game_num,
         kyoku_num: total_kyoku_num,
-        point: total_point,
-        avg_point: divide(total_point, total.game_num as f64),
+        point: (total_point * 10.0).round() / 10.0,
+        avg_point: divide(total_point as f64, total.game_num as f64),
         agari_rate: divide(total_agari_num, total_kyoku_num as f64),
         houjuu_rate: divide(total_houjuu_num, total_kyoku_num as f64),
         houjuu_menzen_rate: divide(
@@ -117,4 +116,63 @@ pub fn statistic(sp_list: Vec<SeasonProModel>) -> Statistic {
         lowest_score: total.game_lowest_score.unwrap_or_default(),
         renchan_max_num: total.renchan_max_num,
     }
+}
+
+#[derive(Serialize, Debug)]
+#[serde(crate = "rocket::serde")]
+pub struct Statistic {
+    pub game_num: i64,
+    pub kyoku_num: i64,
+    pub point: f32,
+    pub avg_point: f64,
+    pub agari_rate: f64,
+    pub houjuu_rate: f64,
+    pub houjuu_menzen_rate: f64,
+    pub houjuu_furo_rate: f64,
+    pub houjuu_richi_rate: f64,
+    pub houjuu_to_dama_rate: f64,
+    pub houjuu_to_furo_rate: f64,
+    pub houjuu_to_richi_rate: f64,
+    pub tsumo_rate: f64,
+    pub agari_dama_rate: f64,
+    pub agari_furo_rate: f64,
+    pub agari_richi_rate: f64,
+    pub ryukyoku_rate: f64,
+    pub ryukyoku_tenpai_rate: f64,
+    pub furo_rate: f64,
+    pub furo_agari_rate: f64,
+    pub furo_ryukyoku_rate: f64,
+    pub furo_houjuu_rate: f64,
+    pub avg_furo_agari_score: f64,
+    pub richi_rate: f64,
+    pub avg_agari_turn: f64,
+    pub avg_agari_score: f64,
+    pub avg_houjuu_score: f64,
+    pub avg_rank: f64,
+    pub blown_rate: f64,
+    pub avg_blown_score: f64,
+    pub ron_rate: f64,
+    pub first_rate: f64,
+    pub second_rate: f64,
+    pub third_rate: f64,
+    pub fourth_rate: f64,
+    pub avg_first_score: f64,
+    pub avg_second_score: f64,
+    pub avg_third_score: f64,
+    pub avg_fourth_score: f64,
+    pub richi_agari_rate: f64,
+    pub richi_houjuu_rate: f64,
+    pub richi_tsumo_rate: f64,
+    pub avg_richi_agari_score: f64,
+    pub richi_ryukyoku_rate: f64,
+    pub avg_richi_turn: f64,
+    pub avg_richi_dora: f64,
+    pub richi_first_rate: f64,
+    pub richi_chase_rate: f64,
+    pub richi_chased_rate: f64,
+    pub ippatsu_rate: f64,
+    pub uradora_rate: f64,
+    pub highest_score: i64,
+    pub lowest_score: i64,
+    pub renchan_max_num: i64,
 }

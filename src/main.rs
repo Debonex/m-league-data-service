@@ -1,19 +1,15 @@
 #[macro_use]
 extern crate rocket;
 
-use dotenv::dotenv;
-use sea_orm_rocket::Database;
-
-mod bo;
-mod data;
-mod domain;
-mod entity;
-mod entity_impl;
+mod common;
 mod pool;
-mod routes;
-mod vo;
+mod pro;
+mod season;
+mod season_year;
+mod team;
 
-use pool::Db;
+use dotenv::dotenv;
+use sqlx::{Pool, Sqlite};
 
 #[get("/")]
 fn index() -> &'static str {
@@ -21,39 +17,41 @@ fn index() -> &'static str {
 }
 
 #[launch]
-fn rocket() -> _ {
+async fn rocket() -> _ {
     dotenv().ok();
+    let pool = pool::get_pool().await.unwrap();
+
     rocket::build()
-        .attach(Db::init())
-        .mount("/", routes![index,])
+        .manage::<Pool<Sqlite>>(pool)
+        .mount("/", routes![index])
         .mount(
             "/season_year",
-            routes![routes::season_year::all, routes::season_year::statistic],
+            routes![season_year::routes::all, season_year::routes::statistic],
         )
         .mount(
             "/season",
             routes![
-                routes::season::all,
-                routes::season::list,
-                routes::season::statistics
+                season::routes::all,
+                season::routes::list,
+                season::routes::statistic
             ],
         )
         .mount(
             "/team",
             routes![
-                routes::team::all,
-                routes::team::info,
-                routes::team::info_by_pro_id
+                team::routes::all,
+                team::routes::info,
+                team::routes::info_by_pro_id
             ],
         )
         .mount(
             "/pro",
             routes![
-                routes::pro::all,
-                routes::pro::statistic,
-                routes::pro::rank,
-                routes::pro::info,
-                routes::pro::list_by_team_id
+                pro::routes::all,
+                pro::routes::statistic,
+                pro::routes::rank,
+                pro::routes::info,
+                pro::routes::list_by_team_id
             ],
         )
 }

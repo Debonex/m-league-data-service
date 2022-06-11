@@ -1,57 +1,208 @@
-use std::cmp::{max, min};
-use std::iter::Sum;
-use std::ops::Add;
+use std::{
+    cmp::{max, min},
+    iter::Sum,
+    ops::Add,
+};
 
-use rust_decimal::Decimal;
+use crate::common::format_sql_vec;
+use rocket::State;
+use sqlx::{Pool, Sqlite};
 
-use crate::entity::season_pro::Model;
+/// 从db获取某个选手的赛季数据，可根据赛季id进行筛选
+pub async fn select_season_pro_by_pro_id(
+    pool: &State<Pool<Sqlite>>,
+    pro_id: i64,
+    seasons: &Option<Vec<i64>>,
+) -> Vec<SeasonPro> {
+    let sql_string = if let Some(seasons) = seasons {
+        format!(
+            "select * from season_pro where pro_id = ? and season_id in {}",
+            format_sql_vec(seasons)
+        )
+    } else {
+        "select * from season_pro where pro_id = ?".to_string()
+    };
+    sqlx::query_as::<_, SeasonPro>(&sql_string)
+        .bind(pro_id)
+        .fetch_all(pool.inner())
+        .await
+        .unwrap_or_default()
+}
 
-impl Model {
-    pub fn first_num(&self) -> i32 {
+/// 从db获取赛季数据，可根据选手id、赛季id进行筛选
+pub async fn select_season_pro(
+    pool: &State<Pool<Sqlite>>,
+    pros: &Option<Vec<i64>>,
+    seasons: &Option<Vec<i64>>,
+) -> Vec<SeasonPro> {
+    let sql_string = if let Some(pros) = pros {
+        if let Some(seasons) = seasons {
+            format!(
+                "select * from season_pro where pro_id in {} and season_id in {}",
+                format_sql_vec(pros),
+                format_sql_vec(seasons)
+            )
+        } else {
+            format!(
+                "select * from season_pro where pro_id in {}",
+                format_sql_vec(pros)
+            )
+        }
+    } else if let Some(seasons) = seasons {
+        format!(
+            "select * from season_pro where season_id in {}",
+            format_sql_vec(seasons)
+        )
+    } else {
+        "select * from season_pro".to_string()
+    };
+
+    sqlx::query_as::<_, SeasonPro>(&sql_string)
+        .fetch_all(pool.inner())
+        .await
+        .unwrap_or_default()
+}
+
+#[derive(Debug, sqlx::FromRow)]
+pub struct SeasonPro {
+    pub id: i64,
+    pub season_id: Option<i64>,
+    pub pro_id: Option<i64>,
+    pub team_id: Option<i64>,
+    pub game_num: i64,
+    pub game_east_start_num: i64,
+    pub game_south_start_num: i64,
+    pub game_west_start_num: i64,
+    pub game_north_start_num: i64,
+    pub game_highest_score: Option<i64>,
+    pub game_lowest_score: Option<i64>,
+    pub first_east_num: i64,
+    pub first_south_num: i64,
+    pub first_west_num: i64,
+    pub first_north_num: i64,
+    pub second_east_num: i64,
+    pub second_south_num: i64,
+    pub second_west_num: i64,
+    pub second_north_num: i64,
+    pub third_east_num: i64,
+    pub third_south_num: i64,
+    pub third_west_num: i64,
+    pub third_north_num: i64,
+    pub fourth_east_num: i64,
+    pub fourth_south_num: i64,
+    pub fourth_west_num: i64,
+    pub fourth_north_num: i64,
+    pub first_score: i64,
+    pub second_score: i64,
+    pub third_score: i64,
+    pub fourth_score: i64,
+    pub score_point: f32,
+    pub rank_point: f32,
+    pub kyoku_east_num: i64,
+    pub kyoku_south_num: i64,
+    pub kyoku_west_num: i64,
+    pub kyoku_north_num: i64,
+    pub shanten_num: i64,
+    pub haipai_dora_num: i64,
+    pub renchan_max_num: i64,
+    pub furo_num: i64,
+    pub richi_num: i64,
+    pub richi_first_num: i64,
+    pub richi_chase_num: i64,
+    pub richi_good_num: i64,
+    pub richi_stupid_num: i64,
+    pub richi_machi_num: i64,
+    pub richi_turn_num: i64,
+    pub richi_suji_num: i64,
+    pub richi_furiten_num: i64,
+    pub richi_dora_num: i64,
+    pub richi_han_num: i64,
+    pub richi_aka_num: i64,
+    pub richi_chased_num: i64,
+    pub ryukyoku_tenpai_richi_num: i64,
+    pub ryukyoku_tenpai_menzen_num: i64,
+    pub ryukyoku_tenpai_furo_num: i64,
+    pub ryukyoku_noten_richi_num: i64,
+    pub ryukyoku_noten_menzen_num: i64,
+    pub ryukyoku_noten_furo_num: i64,
+    pub agari_dama_ron_num: i64,
+    pub agari_dama_tsumo_num: i64,
+    pub agari_dama_score: i64,
+    pub agari_richi_ron_num: i64,
+    pub agari_richi_tsumo_num: i64,
+    pub agari_richi_score: i64,
+    pub agari_richi_ron_ippatsu_num: i64,
+    pub agari_richi_tsumo_ippatsu_num: i64,
+    pub agari_richi_ron_uradora_kyoku_num: i64,
+    pub agari_richi_tsumo_uradora_kyoku_num: i64,
+    pub agari_furo_ron_num: i64,
+    pub agari_furo_tsumo_num: i64,
+    pub agari_furo_score: i64,
+    pub agari_turn_num: i64,
+    pub houjuu_dama_menzen_num: i64,
+    pub houjuu_dama_furo_num: i64,
+    pub houjuu_dama_richi_num: i64,
+    pub houjuu_dama_score: i64,
+    pub houjuu_richi_menzen_num: i64,
+    pub houjuu_richi_furo_num: i64,
+    pub houjuu_richi_richi_num: i64,
+    pub houjuu_richi_score: i64,
+    pub houjuu_richi_ippatsu_num: i64,
+    pub houjuu_furo_menzen_num: i64,
+    pub houjuu_furo_furo_num: i64,
+    pub houjuu_furo_richi_num: i64,
+    pub houjuu_furo_score: i64,
+    pub blown_num: i64,
+    pub blown_score: i64,
+    pub yaku: String,
+}
+
+impl SeasonPro {
+    pub fn first_num(&self) -> i64 {
         self.first_east_num + self.first_south_num + self.first_west_num + self.first_north_num
     }
 
-    pub fn second_num(&self) -> i32 {
+    pub fn second_num(&self) -> i64 {
         self.second_east_num + self.second_south_num + self.second_west_num + self.second_north_num
     }
 
-    pub fn third_num(&self) -> i32 {
+    pub fn third_num(&self) -> i64 {
         self.third_east_num + self.third_south_num + self.third_west_num + self.third_north_num
     }
 
-    pub fn fourth_num(&self) -> i32 {
+    pub fn fourth_num(&self) -> i64 {
         self.fourth_east_num + self.fourth_south_num + self.fourth_west_num + self.fourth_north_num
     }
 
-    pub fn rank_total(&self) -> i32 {
+    pub fn rank_total(&self) -> i64 {
         self.first_num() + self.second_num() * 2 + self.third_num() * 3 + self.fourth_num() * 4
     }
 
-    pub fn kyoku_num(&self) -> i32 {
+    pub fn kyoku_num(&self) -> i64 {
         self.kyoku_east_num + self.kyoku_north_num + self.kyoku_west_num + self.kyoku_north_num
     }
 
-    pub fn point(&self) -> Decimal {
-        self.rank_point.add(self.score_point)
+    pub fn point(&self) -> f32 {
+        self.rank_point + self.score_point
     }
 
-    pub fn agari_dama_num(&self) -> i32 {
+    pub fn agari_dama_num(&self) -> i64 {
         self.agari_dama_ron_num + self.agari_dama_tsumo_num
     }
 
-    pub fn agari_furo_num(&self) -> i32 {
+    pub fn agari_furo_num(&self) -> i64 {
         self.agari_furo_ron_num + self.agari_furo_tsumo_num
     }
 
-    pub fn agari_richi_num(&self) -> i32 {
+    pub fn agari_richi_num(&self) -> i64 {
         self.agari_richi_ron_num + self.agari_richi_tsumo_num
     }
 
-    pub fn agari_num(&self) -> i32 {
+    pub fn agari_num(&self) -> i64 {
         self.agari_dama_num() + self.agari_furo_num() + self.agari_richi_num()
     }
 
-    pub fn houjuu_num(&self) -> i32 {
+    pub fn houjuu_num(&self) -> i64 {
         self.houjuu_dama_furo_num
             + self.houjuu_dama_menzen_num
             + self.houjuu_dama_richi_num
@@ -63,43 +214,140 @@ impl Model {
             + self.houjuu_richi_richi_num
     }
 
-    pub fn tsumo_num(&self) -> i32 {
+    pub fn tsumo_num(&self) -> i64 {
         self.agari_dama_tsumo_num + self.agari_furo_tsumo_num + self.agari_richi_tsumo_num
     }
 
-    pub fn ron_num(&self) -> i32 {
+    pub fn ron_num(&self) -> i64 {
         self.agari_dama_ron_num + self.agari_furo_ron_num + self.agari_richi_ron_num
     }
 
-    pub fn ryukyoku_tenpai_num(&self) -> i32 {
+    pub fn ryukyoku_tenpai_num(&self) -> i64 {
         self.ryukyoku_tenpai_menzen_num
             + self.ryukyoku_tenpai_furo_num
             + self.ryukyoku_tenpai_richi_num
     }
 
-    pub fn ryukyoku_noten_num(&self) -> i32 {
+    pub fn ryukyoku_noten_num(&self) -> i64 {
         self.ryukyoku_noten_menzen_num
             + self.ryukyoku_noten_furo_num
             + self.ryukyoku_noten_richi_num
     }
 
-    pub fn ryukyoku_num(&self) -> i32 {
+    pub fn ryukyoku_num(&self) -> i64 {
         self.ryukyoku_noten_num() + self.ryukyoku_tenpai_num()
     }
 
-    pub fn agari_score(&self) -> i32 {
+    pub fn agari_score(&self) -> i64 {
         self.agari_dama_score + self.agari_furo_score + self.agari_richi_score
     }
 
-    pub fn houjuu_score(&self) -> i32 {
+    pub fn houjuu_score(&self) -> i64 {
         self.houjuu_dama_score + self.houjuu_furo_score + self.houjuu_richi_score
     }
 }
 
-impl<'a> Add<&'a Model> for Model {
+impl Default for SeasonPro {
+    fn default() -> Self {
+        Self {
+            id: 0,
+            season_id: None,
+            pro_id: None,
+            team_id: None,
+            game_num: 0,
+            game_east_start_num: 0,
+            game_south_start_num: 0,
+            game_west_start_num: 0,
+            game_north_start_num: 0,
+            game_highest_score: None,
+            game_lowest_score: None,
+            first_east_num: 0,
+            first_south_num: 0,
+            first_west_num: 0,
+            first_north_num: 0,
+            second_east_num: 0,
+            second_south_num: 0,
+            second_west_num: 0,
+            second_north_num: 0,
+            third_east_num: 0,
+            third_south_num: 0,
+            third_west_num: 0,
+            third_north_num: 0,
+            fourth_east_num: 0,
+            fourth_south_num: 0,
+            fourth_west_num: 0,
+            fourth_north_num: 0,
+            first_score: 0,
+            second_score: 0,
+            third_score: 0,
+            fourth_score: 0,
+            score_point: 0.0,
+            rank_point: 0.0,
+            kyoku_east_num: 0,
+            kyoku_south_num: 0,
+            kyoku_west_num: 0,
+            kyoku_north_num: 0,
+            shanten_num: 0,
+            haipai_dora_num: 0,
+            renchan_max_num: 0,
+            furo_num: 0,
+            richi_num: 0,
+            richi_first_num: 0,
+            richi_chase_num: 0,
+            richi_good_num: 0,
+            richi_stupid_num: 0,
+            richi_machi_num: 0,
+            richi_turn_num: 0,
+            richi_suji_num: 0,
+            richi_furiten_num: 0,
+            richi_dora_num: 0,
+            richi_han_num: 0,
+            richi_aka_num: 0,
+            richi_chased_num: 0,
+            ryukyoku_tenpai_richi_num: 0,
+            ryukyoku_tenpai_menzen_num: 0,
+            ryukyoku_tenpai_furo_num: 0,
+            ryukyoku_noten_richi_num: 0,
+            ryukyoku_noten_menzen_num: 0,
+            ryukyoku_noten_furo_num: 0,
+            agari_dama_ron_num: 0,
+            agari_dama_tsumo_num: 0,
+            agari_dama_score: 0,
+            agari_richi_ron_num: 0,
+            agari_richi_tsumo_num: 0,
+            agari_richi_score: 0,
+            agari_richi_ron_ippatsu_num: 0,
+            agari_richi_tsumo_ippatsu_num: 0,
+            agari_richi_ron_uradora_kyoku_num: 0,
+            agari_richi_tsumo_uradora_kyoku_num: 0,
+            agari_furo_ron_num: 0,
+            agari_furo_tsumo_num: 0,
+            agari_furo_score: 0,
+            agari_turn_num: 0,
+            houjuu_dama_menzen_num: 0,
+            houjuu_dama_furo_num: 0,
+            houjuu_dama_richi_num: 0,
+            houjuu_dama_score: 0,
+            houjuu_richi_menzen_num: 0,
+            houjuu_richi_furo_num: 0,
+            houjuu_richi_richi_num: 0,
+            houjuu_richi_score: 0,
+            houjuu_richi_ippatsu_num: 0,
+            houjuu_furo_menzen_num: 0,
+            houjuu_furo_furo_num: 0,
+            houjuu_furo_richi_num: 0,
+            houjuu_furo_score: 0,
+            blown_num: 0,
+            blown_score: 0,
+            yaku: "{}".to_string(),
+        }
+    }
+}
+
+impl<'a> Add<&'a SeasonPro> for SeasonPro {
     type Output = Self;
 
-    fn add(self, other: &'a Model) -> Self {
+    fn add(self, other: &'a SeasonPro) -> Self::Output {
         Self {
             id: self.id,
             season_id: self.season_id,
@@ -211,104 +459,7 @@ impl<'a> Add<&'a Model> for Model {
     }
 }
 
-impl Default for Model {
-    fn default() -> Self {
-        Self {
-            id: 0,
-            season_id: None,
-            pro_id: None,
-            team_id: None,
-            game_num: 0,
-            game_east_start_num: 0,
-            game_south_start_num: 0,
-            game_west_start_num: 0,
-            game_north_start_num: 0,
-            game_highest_score: None,
-            game_lowest_score: None,
-            first_east_num: 0,
-            first_south_num: 0,
-            first_west_num: 0,
-            first_north_num: 0,
-            second_east_num: 0,
-            second_south_num: 0,
-            second_west_num: 0,
-            second_north_num: 0,
-            third_east_num: 0,
-            third_south_num: 0,
-            third_west_num: 0,
-            third_north_num: 0,
-            fourth_east_num: 0,
-            fourth_south_num: 0,
-            fourth_west_num: 0,
-            fourth_north_num: 0,
-            first_score: 0,
-            second_score: 0,
-            third_score: 0,
-            fourth_score: 0,
-            score_point: Decimal::default(),
-            rank_point: Decimal::default(),
-            kyoku_east_num: 0,
-            kyoku_south_num: 0,
-            kyoku_west_num: 0,
-            kyoku_north_num: 0,
-            shanten_num: 0,
-            haipai_dora_num: 0,
-            renchan_max_num: 0,
-            furo_num: 0,
-            richi_num: 0,
-            richi_first_num: 0,
-            richi_chase_num: 0,
-            richi_good_num: 0,
-            richi_stupid_num: 0,
-            richi_machi_num: 0,
-            richi_turn_num: 0,
-            richi_suji_num: 0,
-            richi_furiten_num: 0,
-            richi_dora_num: 0,
-            richi_han_num: 0,
-            richi_aka_num: 0,
-            richi_chased_num: 0,
-            ryukyoku_tenpai_richi_num: 0,
-            ryukyoku_tenpai_menzen_num: 0,
-            ryukyoku_tenpai_furo_num: 0,
-            ryukyoku_noten_richi_num: 0,
-            ryukyoku_noten_menzen_num: 0,
-            ryukyoku_noten_furo_num: 0,
-            agari_dama_ron_num: 0,
-            agari_dama_tsumo_num: 0,
-            agari_dama_score: 0,
-            agari_richi_ron_num: 0,
-            agari_richi_tsumo_num: 0,
-            agari_richi_score: 0,
-            agari_richi_ron_ippatsu_num: 0,
-            agari_richi_tsumo_ippatsu_num: 0,
-            agari_richi_ron_uradora_kyoku_num: 0,
-            agari_richi_tsumo_uradora_kyoku_num: 0,
-            agari_furo_ron_num: 0,
-            agari_furo_tsumo_num: 0,
-            agari_furo_score: 0,
-            agari_turn_num: 0,
-            houjuu_dama_menzen_num: 0,
-            houjuu_dama_furo_num: 0,
-            houjuu_dama_richi_num: 0,
-            houjuu_dama_score: 0,
-            houjuu_richi_menzen_num: 0,
-            houjuu_richi_furo_num: 0,
-            houjuu_richi_richi_num: 0,
-            houjuu_richi_score: 0,
-            houjuu_richi_ippatsu_num: 0,
-            houjuu_furo_menzen_num: 0,
-            houjuu_furo_furo_num: 0,
-            houjuu_furo_richi_num: 0,
-            houjuu_furo_score: 0,
-            blown_num: 0,
-            blown_score: 0,
-            yaku: "{}".to_string(),
-        }
-    }
-}
-
-impl<'a> Sum<&'a Self> for Model {
+impl<'a> Sum<&'a Self> for SeasonPro {
     fn sum<I: Iterator<Item = &'a Self>>(iter: I) -> Self {
         iter.fold(Self::default(), Add::add)
     }
