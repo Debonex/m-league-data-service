@@ -2,6 +2,7 @@
 extern crate rocket;
 
 mod common;
+mod game;
 mod pool;
 mod pro;
 mod season;
@@ -54,4 +55,5 @@ async fn rocket() -> _ {
                 pro::routes::list_by_team_id
             ],
         )
+        .mount("/game", routes![game::routes::history_pro_pro])
 }
