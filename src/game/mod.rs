@@ -14,6 +14,7 @@ pub struct HistoryResult {
 pub struct Game {
     pub id: i64,
     pub season_id: i64,
+    pub season_name: String,
     pub time: String,
     pub pros: Vec<GamePro>,
 }
