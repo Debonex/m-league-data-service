@@ -55,5 +55,12 @@ async fn rocket() -> _ {
                 pro::routes::list_by_team_id
             ],
         )
-        .mount("/game", routes![game::routes::history_pro_pro])
+        .mount(
+            "/game",
+            routes![
+                game::routes::history_pro_pro,
+                game::routes::history_pro_team,
+                game::routes::history_team_team
+            ],
+        )
 }
