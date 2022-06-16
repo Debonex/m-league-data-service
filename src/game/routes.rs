@@ -30,7 +30,7 @@ pub async fn history_pro_pro(
 
     let games_sql = "
     SELECT
-        *,
+        game.*,
         ( CASE WHEN pid_0 = {pro_id} THEN pp_0 WHEN pid_1 = {pro_id} THEN pp_1 WHEN pid_2 = {pro_id} THEN pp_2 ELSE pp_3 END ) AS pro_point,
         ( CASE WHEN pid_0 = {pro_id2} THEN pp_0 WHEN pid_1 = {pro_id2} THEN pp_1 WHEN pid_2 = {pro_id2} THEN pp_2 ELSE pp_3 END ) AS pro_point2,
         season.season_name as season_name,
@@ -76,7 +76,7 @@ pub async fn history_pro_team(
 
     let games_sql = "
     SELECT
-        * ,
+        game.* ,
         ( CASE WHEN pid_0 = {pro_id} THEN pp_0 WHEN pid_1 = {pro_id} THEN pp_1 WHEN pid_2 = {pro_id} THEN pp_2 ELSE pp_3 END ) AS pro_point,
         ( CASE WHEN team_id_0 = {team_id} THEN pp_0 WHEN team_id_1 = {team_id} THEN pp_1 WHEN team_id_2 = {team_id} THEN pp_2 ELSE pp_3 END ) AS team_point,
         season.season_name as season_name,
@@ -133,7 +133,7 @@ pub async fn history_team_team(
 
     let games_sql = "
     SELECT
-        *,
+        game.*,
         ( CASE WHEN team_id_0 = {team_id} THEN pp_0 WHEN team_id_1 = {team_id} THEN pp_1 WHEN team_id_2 = {team_id} THEN pp_2 ELSE pp_3 END ) AS team_point,
         ( CASE WHEN team_id_0 = {team_id2} THEN pp_0 WHEN team_id_1 = {team_id2} THEN pp_1 WHEN team_id_2 = {team_id2} THEN pp_2 ELSE pp_3 END ) AS team_point2,
         season.season_name as season_name,
