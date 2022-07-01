@@ -1,12 +1,12 @@
+use crate::common::format_sql_vec;
+use rocket::{serde, State};
+use sqlx::{Pool, Sqlite};
 use std::{
     cmp::{max, min},
+    collections::HashMap,
     iter::Sum,
     ops::Add,
 };
-
-use crate::common::format_sql_vec;
-use rocket::State;
-use sqlx::{Pool, Sqlite};
 
 /// 从db获取某个选手的赛季数据，可根据赛季id进行筛选
 pub async fn select_season_pro_by_pro_id(
@@ -348,6 +348,12 @@ impl<'a> Add<&'a SeasonPro> for SeasonPro {
     type Output = Self;
 
     fn add(self, other: &'a SeasonPro) -> Self::Output {
+        let mut yaku: HashMap<String, i32> = serde::json::from_str(&self.yaku).unwrap();
+        let other_yaku: HashMap<String, i32> = serde::json::from_str(&other.yaku).unwrap();
+        for yaku_pair in other_yaku {
+            let count = yaku.entry(yaku_pair.0).or_insert(0);
+            *count += yaku_pair.1;
+        }
         Self {
             id: self.id,
             season_id: self.season_id,
@@ -454,7 +460,7 @@ impl<'a> Add<&'a SeasonPro> for SeasonPro {
             houjuu_furo_score: self.houjuu_furo_score + other.houjuu_furo_score,
             blown_num: self.blown_num + other.blown_num,
             blown_score: self.blown_score + other.blown_score,
-            yaku: self.yaku,
+            yaku: format!("{:?}", yaku),
         }
     }
 }

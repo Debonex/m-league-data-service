@@ -1,5 +1,6 @@
 use super::season_pro::SeasonPro;
-use rocket::serde::Serialize;
+use rocket::serde::{self, Serialize};
+use std::collections::HashMap;
 
 fn divide(divided: f64, divide: f64) -> f64 {
     if divide == 0.0 {
@@ -115,6 +116,7 @@ pub fn statistics(sp_list: Vec<SeasonPro>) -> Statistic {
         highest_score: total.game_highest_score.unwrap_or_default(),
         lowest_score: total.game_lowest_score.unwrap_or_default(),
         renchan_max_num: total.renchan_max_num,
+        yaku: serde::json::from_str(&total.yaku).unwrap(),
     }
 }
 
@@ -175,4 +177,5 @@ pub struct Statistic {
     pub highest_score: i64,
     pub lowest_score: i64,
     pub renchan_max_num: i64,
+    pub yaku: HashMap<String, i32>,
 }
