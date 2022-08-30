@@ -1,10 +1,7 @@
 use super::Team;
-use crate::{
-    common::{
-        season_pro,
-        statistics::{self, Statistic},
-    },
-    pro,
+use crate::common::{
+    season_pro,
+    statistics::{self, Statistic},
 };
 use rocket::{
     serde::{json::Json, Deserialize},
@@ -58,12 +55,7 @@ pub async fn statistic(
     pool: &State<Pool<Sqlite>>,
     params: Json<TeamStatisticParams>,
 ) -> Json<Statistic> {
-    let pros = pro::services::list_by_team_id(pool, params.team_id).await;
-    let sp_list = season_pro::select_season_pro(
-        pool,
-        &Some(pros.iter().map(|pro| pro.id).collect()),
-        &params.seasons,
-    )
-    .await;
+    let sp_list =
+        season_pro::select_season_pro_by_team_id(pool, params.team_id, &params.seasons).await;
     Json(statistics::statistics(sp_list))
 }
