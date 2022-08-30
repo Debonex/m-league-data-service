@@ -1,4 +1,5 @@
 pub mod routes;
+pub mod services;
 
 use rocket::serde::{Serialize, Serializer};
 

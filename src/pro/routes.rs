@@ -48,12 +48,7 @@ pub async fn info(pool: &State<Pool<Sqlite>>, id: i64) -> Json<Pro> {
 
 #[get("/list_by_team_id/<team_id>")]
 pub async fn list_by_team_id(pool: &State<Pool<Sqlite>>, team_id: i64) -> Json<Vec<Pro>> {
-    let pro = sqlx::query_as!(Pro, "SELECT * FROM pro WHERE team_id = ?", team_id)
-        .fetch_all(pool.inner())
-        .await
-        .unwrap_or_default();
-
-    Json(pro)
+    Json(super::services::list_by_team_id(pool, team_id).await)
 }
 
 #[derive(Deserialize)]

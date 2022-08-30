@@ -1,5 +1,15 @@
 use super::Team;
-use rocket::{serde::json::Json, State};
+use crate::{
+    common::{
+        season_pro,
+        statistics::{self, Statistic},
+    },
+    pro,
+};
+use rocket::{
+    serde::{json::Json, Deserialize},
+    State,
+};
 use sqlx::{Pool, Sqlite};
 
 #[get("/all")]
@@ -34,4 +44,26 @@ pub async fn info_by_pro_id(pool: &State<Pool<Sqlite>>, pro_id: i64) -> Json<Tea
     .unwrap_or_default();
 
     Json(team)
+}
+
+#[derive(Deserialize)]
+#[serde(crate = "rocket::serde")]
+pub struct TeamStatisticParams {
+    team_id: i64,
+    seasons: Option<Vec<i64>>,
+}
+
+#[post("/statistic", format = "json", data = "<params>")]
+pub async fn statistic(
+    pool: &State<Pool<Sqlite>>,
+    params: Json<TeamStatisticParams>,
+) -> Json<Statistic> {
+    let pros = pro::services::list_by_team_id(pool, params.team_id).await;
+    let sp_list = season_pro::select_season_pro(
+        pool,
+        &Some(pros.iter().map(|pro| pro.id).collect()),
+        &params.seasons,
+    )
+    .await;
+    Json(statistics::statistics(sp_list))
 }

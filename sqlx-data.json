@@ -1,0 +1,363 @@
+{
+  "db": "SQLite",
+  "121c69109a922eec1c37f10c7a4d6d5acf5c23fd0382cb824047f85f90b236b3": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int64"
+        },
+        {
+          "name": "team_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "team_code",
+          "ordinal": 2,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        true,
+        true
+      ],
+      "parameters": {
+        "Right": 1
+      }
+    },
+    "query": "select * from team where id = ?"
+  },
+  "2e94f0ec519a63684ba5b98a3046420ffa56537a28b8e5a770f29f63768e25b6": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int64"
+        },
+        {
+          "name": "pro_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "team_id",
+          "ordinal": 2,
+          "type_info": "Int64"
+        },
+        {
+          "name": "birth",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "birth_place",
+          "ordinal": 4,
+          "type_info": "Text"
+        },
+        {
+          "name": "org",
+          "ordinal": 5,
+          "type_info": "Text"
+        },
+        {
+          "name": "pro_year",
+          "ordinal": 6,
+          "type_info": "Int64"
+        }
+      ],
+      "nullable": [
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "parameters": {
+        "Right": 1
+      }
+    },
+    "query": "SELECT * FROM pro WHERE id = ?"
+  },
+  "63a8c16fbda6e19cb0511f1fd9e4ac9db4993e95e1cca84f91437497346d0705": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int64"
+        },
+        {
+          "name": "season_year_id",
+          "ordinal": 1,
+          "type_info": "Int64"
+        },
+        {
+          "name": "season_name",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "season_type",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "season_code",
+          "ordinal": 4,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        true,
+        true,
+        true,
+        true
+      ],
+      "parameters": {
+        "Right": 1
+      }
+    },
+    "query": "select * from season where season_year_id = ?"
+  },
+  "71b70a9096eaecb6acf5eb6e988d2be62ed808c709c84cb7fb758df59df1ce2c": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int64"
+        },
+        {
+          "name": "pro_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "team_id",
+          "ordinal": 2,
+          "type_info": "Int64"
+        },
+        {
+          "name": "birth",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "birth_place",
+          "ordinal": 4,
+          "type_info": "Text"
+        },
+        {
+          "name": "org",
+          "ordinal": 5,
+          "type_info": "Text"
+        },
+        {
+          "name": "pro_year",
+          "ordinal": 6,
+          "type_info": "Int64"
+        }
+      ],
+      "nullable": [
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "parameters": {
+        "Right": 0
+      }
+    },
+    "query": "select * from pro"
+  },
+  "7b1d52ec5b54d921964aed5f663440414c4551c0df89db72fd9cc89b864fd210": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int64"
+        },
+        {
+          "name": "team_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "team_code",
+          "ordinal": 2,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        true,
+        true
+      ],
+      "parameters": {
+        "Right": 0
+      }
+    },
+    "query": "select * from team"
+  },
+  "a157c3463da1623bc37b2e660e430375d856f9f9d0f80fac6dab8315d672c81c": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int64"
+        },
+        {
+          "name": "team_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "team_code",
+          "ordinal": 2,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        true,
+        true
+      ],
+      "parameters": {
+        "Right": 1
+      }
+    },
+    "query": "select team.id as id, team_name, team_code from team left join pro on team.id = pro.team_id where pro.id = ?"
+  },
+  "e912488b7730ec714b65d0118957dfd2f4cad9d982f4a7ec8118f33d46bbb4de": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int64"
+        },
+        {
+          "name": "season_year_id",
+          "ordinal": 1,
+          "type_info": "Int64"
+        },
+        {
+          "name": "season_name",
+          "ordinal": 2,
+          "type_info": "Text"
+        },
+        {
+          "name": "season_type",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "season_code",
+          "ordinal": 4,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        true,
+        true,
+        true,
+        true
+      ],
+      "parameters": {
+        "Right": 0
+      }
+    },
+    "query": "select * from season"
+  },
+  "ec0c6f598a9b81072c7c78cdfb7262b5c81d932cdfb78532042277ffd21b92e4": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int64"
+        },
+        {
+          "name": "pro_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        },
+        {
+          "name": "team_id",
+          "ordinal": 2,
+          "type_info": "Int64"
+        },
+        {
+          "name": "birth",
+          "ordinal": 3,
+          "type_info": "Text"
+        },
+        {
+          "name": "birth_place",
+          "ordinal": 4,
+          "type_info": "Text"
+        },
+        {
+          "name": "org",
+          "ordinal": 5,
+          "type_info": "Text"
+        },
+        {
+          "name": "pro_year",
+          "ordinal": 6,
+          "type_info": "Int64"
+        }
+      ],
+      "nullable": [
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "parameters": {
+        "Right": 1
+      }
+    },
+    "query": "SELECT * FROM pro WHERE team_id = ?"
+  },
+  "f464615794d5882900ffae16a578624a524062492828190f0d714f099a120bef": {
+    "describe": {
+      "columns": [
+        {
+          "name": "id",
+          "ordinal": 0,
+          "type_info": "Int64"
+        },
+        {
+          "name": "season_year_name",
+          "ordinal": 1,
+          "type_info": "Text"
+        }
+      ],
+      "nullable": [
+        false,
+        true
+      ],
+      "parameters": {
+        "Right": 0
+      }
+    },
+    "query": "select * from season_year"
+  }
+}
