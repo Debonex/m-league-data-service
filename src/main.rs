@@ -43,7 +43,8 @@ async fn rocket() -> _ {
                 team::routes::all,
                 team::routes::info,
                 team::routes::info_by_pro_id,
-                team::routes::statistic
+                team::routes::statistic,
+                team::routes::rank
             ],
         )
         .mount(

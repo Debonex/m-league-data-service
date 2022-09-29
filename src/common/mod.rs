@@ -1,3 +1,4 @@
+pub mod ranks;
 pub mod season_pro;
 pub mod statistics;
 
