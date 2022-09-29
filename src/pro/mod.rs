@@ -1,7 +1,8 @@
 pub mod routes;
 pub mod services;
 
-use rocket::serde::{Serialize, Serializer};
+use crate::common::ranks::{Value, ValueItem};
+use rocket::serde::Serialize;
 
 #[derive(Serialize)]
 #[serde(crate = "rocket::serde")]
@@ -29,33 +30,6 @@ impl Default for Pro {
     }
 }
 
-#[derive(PartialEq, PartialOrd, Debug)]
-pub enum Value {
-    Integer(i64),
-    Float(f32),
-}
-
-impl Serialize for Value {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        match self {
-            Value::Integer(v) => serializer.serialize_i64(*v),
-            Value::Float(v) => serializer.serialize_f32(*v),
-        }
-    }
-}
-
-impl Value {
-    pub fn float_value(&self) -> Option<f32> {
-        match self {
-            Value::Float(v) => Some(*v),
-            _ => None,
-        }
-    }
-}
-
 #[derive(Serialize)]
 #[serde(crate = "rocket::serde")]
 pub struct ProValueItem {
@@ -63,4 +37,14 @@ pub struct ProValueItem {
     pub pro_name: String,
     pub team_id: i64,
     pub value: Value,
+}
+
+impl ValueItem for ProValueItem {
+    fn get_value(self) -> Value {
+        self.value
+    }
+
+    fn set_value(&mut self, value: Value) {
+        self.value = value
+    }
 }
