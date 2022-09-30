@@ -63,6 +63,40 @@ pub async fn select_season_pro(
         .unwrap_or_default()
 }
 
+/// 从db获取赛季数据，可根据队伍id、赛季id进行筛选
+pub async fn select_season_pro_by_teams(
+    pool: &State<Pool<Sqlite>>,
+    teams: &Option<Vec<i64>>,
+    seasons: &Option<Vec<i64>>,
+) -> Vec<SeasonPro> {
+    let sql_string = if let Some(teams) = teams {
+        if let Some(seasons) = seasons {
+            format!(
+                "select * from season_pro where team_id in {} and season_id in {}",
+                format_sql_vec(teams),
+                format_sql_vec(seasons)
+            )
+        } else {
+            format!(
+                "select * from season_pro where team_id in {}",
+                format_sql_vec(teams)
+            )
+        }
+    } else if let Some(seasons) = seasons {
+        format!(
+            "select * from season_pro where season_id in {}",
+            format_sql_vec(seasons)
+        )
+    } else {
+        "select * from season_pro".to_string()
+    };
+
+    sqlx::query_as::<_, SeasonPro>(&sql_string)
+        .fetch_all(pool.inner())
+        .await
+        .unwrap_or_default()
+}
+
 /// 从db获取某个队伍的赛季数据，可根据赛季id进行筛选
 pub async fn select_season_pro_by_team_id(
     pool: &State<Pool<Sqlite>>,
