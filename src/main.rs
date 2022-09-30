@@ -3,6 +3,7 @@ extern crate rocket;
 
 mod common;
 mod game;
+mod league;
 mod pool;
 mod pro;
 mod season;
@@ -37,6 +38,7 @@ async fn rocket() -> _ {
                 season::routes::statistic
             ],
         )
+        .mount("/league", routes![league::routes::statistic])
         .mount(
             "/team",
             routes![
