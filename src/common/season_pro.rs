@@ -403,8 +403,10 @@ impl<'a> Add<&'a SeasonPro> for SeasonPro {
     type Output = Self;
 
     fn add(self, other: &'a SeasonPro) -> Self::Output {
-        let mut yaku: HashMap<String, i32> = serde::json::from_str(&self.yaku).unwrap();
-        let other_yaku: HashMap<String, i32> = serde::json::from_str(&other.yaku).unwrap();
+        let mut yaku: HashMap<String, i32> =
+            serde::json::from_str(&self.yaku).unwrap_or(HashMap::default());
+        let other_yaku: HashMap<String, i32> =
+            serde::json::from_str(&other.yaku).unwrap_or(HashMap::default());
         for yaku_pair in other_yaku {
             let count = yaku.entry(yaku_pair.0).or_insert(0);
             *count += yaku_pair.1;
