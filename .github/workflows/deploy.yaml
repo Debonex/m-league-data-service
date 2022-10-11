@@ -27,4 +27,4 @@ jobs:
             docker stop ml-service
             docker rmi ghcr.io/debonex/m-league-data-service:latest
             docker pull ghcr.io/debonex/m-league-data-service:latest
-            docker run -d --rm --name ml-service --privileged=true --network ml -v ${{ secrets.ECS_DATABASE_PATH }}:/workspace/database/mleague.db ghcr.io/debonex/m-league-data-service:latest
+            docker run -d --rm --name ml-service --privileged=true --network ml -v ${{ secrets.ECS_DATABASE_DIR }}:/workspace/database ghcr.io/debonex/m-league-data-service:latest
