@@ -9,10 +9,3 @@ backend for m-league-data
 - modify `DATABASE_URL` in `.env` to point to the generated `.db` file
 
 - `cargo run`
-
-## run with docker image
-
-- `docker pull debonex/m-league-data-service:latest`
-
-- `docker run --rm -v ${HOST_DATABASE_PATH}:/workspace/database/mleague.db -p 7878:7878 debonex/m-league-data-service:latest`
-
